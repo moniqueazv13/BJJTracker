@@ -19,7 +19,7 @@ Contador visual de presença no tatâme para acompanhamento até a próxima grad
 
 ## Arquitetura
 
-O projeto segue o padrão **MVVM**, com elementos de **MVI**
+O projeto segue o padrão **MVVM**, com elementos de **MVI**.
 
 ## Como executar
 
