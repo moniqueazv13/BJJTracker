@@ -1,3 +1,44 @@
 <resources>
     <string name="app_name">BJJTracker</string>
+
+    <!-- Home -->
+    <string name="home_logo_initial">R</string>
+    <string name="home_title">RollTracker</string>
+    <string name="home_stat_trainings_month">Treinos este mês</string>
+    <string name="home_stat_trainings_delta">%1$+d vs. %2$s</string>
+    <string name="home_stat_time_on_mat">Tempo no tatame</string>
+    <string name="home_stat_average_session">Média de %1$s</string>
+    <string name="home_stat_saved_techniques">Técnicas salvas</string>
+    <string name="home_hero_title">Cada treino conta.</string>
+    <string name="home_hero_subtitle">Você já completou %1$d de %2$d treinos rumo ao seu próximo grau.</string>
+    <string name="home_register_training">Registrar treino</string>
+    <string name="home_progress_percent">%1$d%%</string>
+    <string name="home_progress_of_goal">da meta</string>
+    <plurals name="home_remaining_trainings">
+        <item quantity="one">Faltam %1$d treino para a meta</item>
+        <item quantity="other">Faltam %1$d treinos para a meta</item>
+    </plurals>
+    <string name="nav_home">Início</string>
+    <string name="nav_trainings">Treinos</string>
+    <string name="nav_techniques">Técnicas</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!-- Register roll dialog -->
+    <string name="register_roll_overline">DIÁRIO DE TREINO</string>
+    <string name="register_roll_title">Como foi o rola?</string>
+    <string name="register_roll_close">Fechar</string>
+    <string name="register_roll_date">Data</string>
+    <string name="register_roll_duration">Duração</string>
+    <string name="register_roll_partners">Parceiros de treino</string>
+    <string name="register_roll_partners_hint">Ex.: Caio, Lucas</string>
+    <string name="register_roll_focus">Foco do dia</string>
+    <string name="register_roll_save">Salvar treino</string>
+    <string name="register_roll_duration_title">Duração do treino</string>
+    <string name="register_roll_duration_decrease">− 15</string>
+    <string name="register_roll_duration_increase">+ 15</string>
+
+    <!-- Common -->
+    <string name="calendar_title">OK</string>
+    <string name="calendar_action_ok">OK</string>
+    <string name="calendar_action_cancel">Cancelar</string>
 </resources>

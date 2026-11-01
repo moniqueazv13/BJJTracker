@@ -7,8 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import br.com.bjjtracker.ui.Route
-import br.com.bjjtracker.ui.home.HomeScreen
-import br.com.bjjtracker.ui.home.HomeUiState
+import br.com.bjjtracker.ui.home.HomeRoute
 
 @Composable
 fun AppNavHost(
@@ -22,11 +21,7 @@ fun AppNavHost(
         modifier = modifier
     ) {
         composable<Route.Home> {
-            HomeScreen(
-                state = HomeUiState(),
-                onAddTraining = {},
-                onRegisterTraining = {},
-            )
+            HomeRoute()
         }
     }
 }

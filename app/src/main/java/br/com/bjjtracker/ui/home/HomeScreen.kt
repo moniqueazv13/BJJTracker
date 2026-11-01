@@ -1,5 +1,6 @@
 package br.com.bjjtracker.ui.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,12 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MenuBook
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -48,25 +43,53 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.com.bjjtracker.ui.theme.BlueAccent
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import br.com.bjjtracker.R
+import br.com.bjjtracker.ui.home.model.BottomNavItemEnum
+import br.com.bjjtracker.ui.home.model.StatItem
+import br.com.bjjtracker.ui.theme.BJJTrackerTheme
+import br.com.bjjtracker.ui.theme.Gray
 import br.com.bjjtracker.ui.theme.Mint
 import br.com.bjjtracker.ui.theme.NavyDark
 import br.com.bjjtracker.ui.theme.NavyDeep
 import br.com.bjjtracker.ui.theme.SurfaceLight
-import br.com.bjjtracker.ui.theme.TextMuted
+
+@Composable
+fun HomeRoute(viewModel: HomeViewModel = viewModel()) {
+
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    var showRegisterDialog by remember { mutableStateOf(false) }
+
+    HomeScreen(
+        state = state,
+        onRegisterTraining = { showRegisterDialog = true },
+    )
+
+    if (showRegisterDialog) {
+        RegisterRollDialogRoute(
+            onDismiss = { showRegisterDialog = false },
+            onSave = { training ->
+                // training.date, training.durationMinutes, training.partners, training.focus
+                showRegisterDialog = false
+            },
+        )
+    }
+}
 
 @Composable
 fun HomeScreen(
     state: HomeUiState,
-    onAddTraining: () -> Unit,
-    onRegisterTraining: () -> Unit,
+    onRegisterTraining: () -> Unit
 ) {
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableStateOf(BottomNavItemEnum.HOME) }
 
     Scaffold(
         containerColor = SurfaceLight,
@@ -75,33 +98,6 @@ fun HomeScreen(
             BottomNav(selected = selectedTab, onSelect = { selectedTab = it })
         },
     ) { padding ->
-        val stats = listOf(
-            StatItem(
-                icon = Icons.Filled.CalendarToday,
-                label = "Treinos este mês",
-                value = state.trainingsThisMonth.toString(),
-                detail = "+${state.trainingsDeltaVsLastMonth} vs. maio",
-                iconTint = Mint,
-                iconBackground = Mint.copy(alpha = 0.15f),
-            ),
-            StatItem(
-                icon = Icons.Filled.Schedule,
-                label = "Tempo no tatame",
-                value = state.timeOnMat,
-                detail = "Média de ${state.averageSession}",
-                iconTint = BlueAccent,
-                iconBackground = BlueAccent.copy(alpha = 0.12f),
-            ),
-            StatItem(
-                icon = Icons.Filled.MenuBook,
-                label = "Técnicas salvas",
-                value = state.savedTechniques.toString(),
-                detail = "",
-                iconTint = Color(0xFFE08A3C),
-                iconBackground = Color(0xFFE08A3C).copy(alpha = 0.15f),
-            ),
-        )
-
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -110,9 +106,9 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item {
-                HeroCard(state = state, onRegister = onRegisterTraining)
+                TrainingCard(state = state, onRegister = onRegisterTraining)
             }
-            items(stats) { stat ->
+            items(state.stats) { stat ->
                 StatCard(stat)
             }
         }
@@ -136,11 +132,15 @@ private fun TopBar() {
                     .background(Mint),
                 contentAlignment = Alignment.Center,
             ) {
-                Text("R", color = Color.White, fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.home_logo_initial),
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
             }
             Spacer(Modifier.width(10.dp))
             Text(
-                text = "RollTracker",
+                text = stringResource(R.string.home_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = NavyDark,
@@ -150,8 +150,9 @@ private fun TopBar() {
     }
 }
 
+@SuppressLint("ResourceType")
 @Composable
-private fun HeroCard(state: HomeUiState, onRegister: () -> Unit) {
+private fun TrainingCard(state: HomeUiState, onRegister: () -> Unit) {
     Card(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
@@ -166,17 +167,19 @@ private fun HeroCard(state: HomeUiState, onRegister: () -> Unit) {
             modifier = Modifier.padding(20.dp),
             horizontalAlignment = Alignment.Start,
         ) {
-
             Spacer(Modifier.height(16.dp))
-
             Text(
-                text = "Cada treino conta.",
+                text = stringResource(R.string.home_hero_title),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.ExtraBold,
                 color = Color.White,
             )
             Text(
-                text = buildSubtitle(state),
+                text = stringResource(
+                    R.string.home_hero_subtitle,
+                    state.trainingsDone,
+                    state.trainingsGoal,
+                ),
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.White.copy(alpha = 0.7f),
             )
@@ -193,21 +196,25 @@ private fun HeroCard(state: HomeUiState, onRegister: () -> Unit) {
             ) {
                 Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
-                Text("Registrar treino", fontWeight = FontWeight.SemiBold)
+                Text(
+                    stringResource(R.string.home_register_training),
+                    fontWeight = FontWeight.SemiBold
+                )
             }
-
             Spacer(Modifier.height(24.dp))
-
             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                ProgressRing(progress = state.progress, label = "${state.progressPercent}%")
+                ProgressRing(
+                    progress = state.progress,
+                    label = stringResource(R.string.home_progress_percent, state.progressPercent)
+                )
             }
-
-            Spacer(Modifier.height(20.dp))
-
             Spacer(Modifier.height(8.dp))
-
             Text(
-                text = buildRemainingText(state.remaining),
+                text = pluralStringResource(
+                    R.plurals.home_remaining_trainings,
+                    state.remaining,
+                    state.remaining,
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = Color.White.copy(alpha = 0.6f),
                 modifier = Modifier.fillMaxWidth(),
@@ -216,14 +223,6 @@ private fun HeroCard(state: HomeUiState, onRegister: () -> Unit) {
         }
     }
 }
-
-private fun buildSubtitle(state: HomeUiState) = buildString {
-    append("Você já completou")
-    append("${state.trainingsDone} de ${state.trainingsGoal} treinos")
-    append("rumo ao seu próximo grau.")
-}
-
-private fun buildRemainingText(remaining: Int) = "Faltam $remaining treinos para a meta"
 
 @Composable
 private fun ProgressRing(progress: Float, label: String) {
@@ -243,7 +242,7 @@ private fun ProgressRing(progress: Float, label: String) {
             color = Color.White,
         )
         Text(
-            "da meta",
+            stringResource(R.string.home_progress_of_goal),
             style = MaterialTheme.typography.labelSmall,
             color = Color.White.copy(alpha = 0.6f)
         )
@@ -265,17 +264,17 @@ private fun StatCard(stat: StatItem) {
                 modifier = Modifier
                     .size(44.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(stat.iconBackground),
+                    .background(stat.type.iconBackground),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(stat.icon, contentDescription = null, tint = stat.iconTint)
+                Icon(stat.type.icon, contentDescription = null, tint = stat.type.iconTint)
             }
             Spacer(Modifier.width(14.dp))
             Column {
                 Text(
-                    text = stat.label,
+                    text = stringResource(stat.type.labelRes),
                     style = MaterialTheme.typography.labelMedium,
-                    color = TextMuted,
+                    color = Gray,
                 )
                 Row(verticalAlignment = Alignment.Bottom) {
                     Text(
@@ -284,12 +283,12 @@ private fun StatCard(stat: StatItem) {
                         fontWeight = FontWeight.Bold,
                         color = NavyDark,
                     )
-                    if (stat.detail.isNotEmpty()) {
+                    stat.type.detailRes?.let { detailRes ->
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = stat.detail,
+                            text = stringResource(detailRes, *stat.detailArgs.toTypedArray()),
                             style = MaterialTheme.typography.labelSmall,
-                            color = TextMuted,
+                            color = Gray,
                         )
                     }
                 }
@@ -299,19 +298,14 @@ private fun StatCard(stat: StatItem) {
 }
 
 @Composable
-private fun BottomNav(selected: Int, onSelect: (Int) -> Unit) {
-    val items = listOf(
-        "Início" to Icons.Filled.Home,
-        "Treinos" to Icons.Filled.Event,
-        "Técnicas" to Icons.Filled.MenuBook,
-        "Perfil" to Icons.Filled.Person,
-    )
+private fun BottomNav(selected: BottomNavItemEnum, onSelect: (BottomNavItemEnum) -> Unit) {
     NavigationBar(containerColor = Color.White) {
-        items.forEachIndexed { index, (label, icon) ->
+        BottomNavItemEnum.entries.forEach { item ->
+            val label = stringResource(item.labelRes)
             NavigationBarItem(
-                selected = selected == index,
-                onClick = { onSelect(index) },
-                icon = { Icon(icon, contentDescription = label) },
+                selected = selected == item,
+                onClick = { onSelect(item) },
+                icon = { Icon(item.icon, contentDescription = label) },
                 label = { Text(label) },
             )
         }
@@ -321,10 +315,17 @@ private fun BottomNav(selected: Int, onSelect: (Int) -> Unit) {
 @Preview
 @Composable
 private fun HomeScreenPreview() {
-    MaterialTheme {
+    BJJTrackerTheme {
         HomeScreen(
-            state = HomeUiState(),
-            onAddTraining = {},
+            state = HomeUiState(
+                trainingsDone = 18,
+                trainingsGoal = 25,
+                trainingsThisMonth = 8,
+                trainingsDeltaVsLastMonth = 2,
+                timeOnMat = "11h 40m",
+                averageSession = "1h 27m",
+                savedTechniques = 6,
+            ),
             onRegisterTraining = {},
         )
     }
