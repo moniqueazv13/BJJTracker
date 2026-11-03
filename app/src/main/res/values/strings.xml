@@ -1,14 +1,14 @@
 <resources>
-    <string name="app_name">BJJTracker</string>
 
     <!-- Home -->
     <string name="home_logo_initial">R</string>
-    <string name="home_title">RollTracker</string>
+    <string name="home_title">BJJTracker</string>
     <string name="home_stat_trainings_month">Treinos este mês</string>
     <string name="home_stat_trainings_delta">%1$+d vs. %2$s</string>
     <string name="home_stat_time_on_mat">Tempo no tatame</string>
     <string name="home_stat_average_session">Média de %1$s</string>
     <string name="home_stat_saved_techniques">Técnicas salvas</string>
+    <string name="home_stat_focus_saved">%s favoritas</string>
     <string name="home_hero_title">Cada treino conta.</string>
     <string name="home_hero_subtitle">Você já completou %1$d de %2$d treinos rumo ao seu próximo grau.</string>
     <string name="home_register_training">Registrar treino</string>
@@ -33,6 +33,7 @@
     <string name="register_roll_partners_hint">Ex.: Caio, Lucas</string>
     <string name="register_roll_focus">Foco do dia</string>
     <string name="register_roll_save">Salvar treino</string>
+    <string name="register_roll_saved">Treino salvo!</string>
     <string name="register_roll_duration_title">Duração do treino</string>
     <string name="register_roll_duration_decrease">− 15</string>
     <string name="register_roll_duration_increase">+ 15</string>

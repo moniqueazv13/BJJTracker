@@ -35,7 +35,7 @@ enum class StatType(
     ),
     SAVED_TECHNIQUES(
         labelRes = R.string.home_stat_saved_techniques,
-        detailRes = null,
+        detailRes = R.string.home_stat_focus_saved,
         icon = Icons.Filled.MenuBook,
         iconTint = OrangeAccent,
         iconBackground = OrangeAccent.copy(alpha = 0.15f),

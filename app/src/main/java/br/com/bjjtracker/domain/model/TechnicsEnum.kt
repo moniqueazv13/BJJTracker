@@ -1,4 +1,4 @@
-package br.com.bjjtracker.ui.home.model
+package br.com.bjjtracker.domain.model
 
 enum class TechnicsEnum(val label: String) {
     GUARDA("Guarda"),

@@ -56,31 +56,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneOffset
 import br.com.bjjtracker.R
-import br.com.bjjtracker.ui.home.model.TechnicsEnum
-import br.com.bjjtracker.ui.home.model.TrainingItem
-import br.com.bjjtracker.ui.home.utils.formatDuration
-import br.com.bjjtracker.ui.home.utils.formatDate
+import br.com.bjjtracker.domain.model.TechnicsEnum
+import br.com.bjjtracker.domain.model.TrainingItem
 import br.com.bjjtracker.ui.home.utils.decreaseDuration
+import br.com.bjjtracker.ui.home.utils.formatDate
+import br.com.bjjtracker.ui.home.utils.formatDuration
 import br.com.bjjtracker.ui.home.utils.increaseDuration
 import br.com.bjjtracker.ui.theme.BJJTrackerTheme
 import br.com.bjjtracker.ui.theme.Border
-import br.com.bjjtracker.ui.theme.Gray
 import br.com.bjjtracker.ui.theme.ChipBackground
-import br.com.bjjtracker.ui.theme.Navy
+import br.com.bjjtracker.ui.theme.Gray
 import br.com.bjjtracker.ui.theme.GreenBackground
 import br.com.bjjtracker.ui.theme.GreenText
+import br.com.bjjtracker.ui.theme.Navy
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 @Composable
 fun RegisterRollDialogRoute(
     onDismiss: () -> Unit,
     onSave: (TrainingItem) -> Unit,
+    isSaved: Boolean = false,
 ) {
     Dialog(onDismissRequest = onDismiss) {
-        RegisterRollDialogScreen(onDismiss = onDismiss, onSave = onSave)
+        RegisterRollDialogScreen(onDismiss = onDismiss, onSave = onSave, isSaved = isSaved)
     }
 }
 
@@ -88,6 +89,7 @@ fun RegisterRollDialogRoute(
 private fun RegisterRollDialogScreen(
     onDismiss: () -> Unit,
     onSave: (TrainingItem) -> Unit,
+    isSaved: Boolean,
 ) {
     var localDateInstance by rememberSaveable { mutableLongStateOf(LocalDate.now().toEpochDay()) }
     val date = LocalDate.ofEpochDay(localDateInstance)
@@ -219,7 +221,7 @@ private fun RegisterRollDialogScreen(
                 )
             }
             Button(
-                onClick = { onSave(TrainingItem(date, durationMinutes, partners.trim(), technic)) },
+                onClick = { onSave(TrainingItem(date = date, durationMinutes = durationMinutes, partners = partners.trim(), technics = technic)) },
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Navy,
@@ -228,7 +230,9 @@ private fun RegisterRollDialogScreen(
                 modifier = Modifier.height(44.dp),
             ) {
                 Text(
-                    stringResource(R.string.register_roll_save),
+                    stringResource(
+                        if (isSaved) R.string.register_roll_saved else R.string.register_roll_save
+                    ),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -373,6 +377,7 @@ private fun RegisterRollDialogPreview() {
         RegisterRollDialogScreen(
             onDismiss = {},
             onSave = {},
+            isSaved = false,
         )
     }
 }

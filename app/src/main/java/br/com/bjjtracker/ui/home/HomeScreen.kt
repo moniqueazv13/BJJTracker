@@ -33,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,7 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.compose.koinViewModel
 import br.com.bjjtracker.R
 import br.com.bjjtracker.ui.home.model.BottomNavItemEnum
 import br.com.bjjtracker.ui.home.model.StatItem
@@ -62,11 +63,29 @@ import br.com.bjjtracker.ui.theme.NavyDark
 import br.com.bjjtracker.ui.theme.NavyDeep
 import br.com.bjjtracker.ui.theme.SurfaceLight
 
+
 @Composable
-fun HomeRoute(viewModel: HomeViewModel = viewModel()) {
+fun HomeRoute(viewModel: HomeViewModel = koinViewModel()) {
+
+    LaunchedEffect(Unit) {
+        viewModel.onAction(HomeAction.LoadHomeInfo)
+    }
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showRegisterDialog by remember { mutableStateOf(false) }
+    var trainingSaved by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                HomeEvent.TrainingSaved -> {
+                    trainingSaved = true
+                    showRegisterDialog = false
+                    trainingSaved = false
+                }
+            }
+        }
+    }
 
     HomeScreen(
         state = state,
@@ -76,10 +95,8 @@ fun HomeRoute(viewModel: HomeViewModel = viewModel()) {
     if (showRegisterDialog) {
         RegisterRollDialogRoute(
             onDismiss = { showRegisterDialog = false },
-            onSave = { training ->
-                // training.date, training.durationMinutes, training.partners, training.focus
-                showRegisterDialog = false
-            },
+            onSave = { training -> viewModel.onAction(HomeAction.SaveTraining(training)) },
+            isSaved = trainingSaved,
         )
     }
 }
@@ -325,6 +342,9 @@ private fun HomeScreenPreview() {
                 timeOnMat = "11h 40m",
                 averageSession = "1h 27m",
                 savedTechniques = 6,
+                technicsSaved = 5,
+                favoriteTechnics = 2,
+                previousMonthName = "outubro",
             ),
             onRegisterTraining = {},
         )
