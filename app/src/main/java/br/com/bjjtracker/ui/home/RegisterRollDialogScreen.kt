@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -154,7 +155,7 @@ private fun RegisterRollDialogScreen(
 
         TitleTextItem(stringResource(R.string.register_roll_duration))
         TextInputItem(Icons.Outlined.Schedule, onClick = { showTrainingTime = true }) {
-            Text(formatDuration(durationMinutes), color = Navy, fontSize = 13.sp)
+            Text(formatDuration(LocalContext.current, durationMinutes), color = Navy, fontSize = 13.sp)
         }
 
         Spacer(Modifier.height(16.dp))
@@ -221,7 +222,7 @@ private fun RegisterRollDialogScreen(
                 )
             }
             Button(
-                onClick = { onSave(TrainingItem(date = date, durationMinutes = durationMinutes, partners = partners.trim(), technics = technic)) },
+                onClick = { onSave(TrainingItem(date = date, durationMinutes = durationMinutes, partners = partners.trim(), technicItem = technic)) },
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Navy,
@@ -359,7 +360,7 @@ private fun TimeSelector(
                 TextButton(onClick = { minutes = minutes.decreaseDuration() }) {
                     Text(stringResource(R.string.register_roll_duration_decrease), fontSize = 18.sp)
                 }
-                Text(formatDuration(minutes), fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(formatDuration(LocalContext.current, minutes), fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 TextButton(onClick = { minutes = minutes.increaseDuration() }) {
                     Text(stringResource(R.string.register_roll_duration_increase), fontSize = 18.sp)
                 }

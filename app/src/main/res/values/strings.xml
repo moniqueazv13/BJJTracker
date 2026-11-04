@@ -37,6 +37,9 @@
     <string name="register_roll_duration_title">Duração do treino</string>
     <string name="register_roll_duration_decrease">− 15</string>
     <string name="register_roll_duration_increase">+ 15</string>
+    <string name="duration_format_minutes">%1$dmin</string>
+    <string name="duration_format_hours">%1$dh</string>
+    <string name="duration_format_hours_minutes">%1$dh %2$dmin</string>
 
     <!-- Common -->
     <string name="calendar_title">OK</string>

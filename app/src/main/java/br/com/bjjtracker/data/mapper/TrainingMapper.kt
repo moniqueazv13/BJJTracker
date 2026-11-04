@@ -8,7 +8,7 @@ fun TrainingEntity.toDomain(): TrainingItem = TrainingItem(
     date = date,
     durationMinutes = durationMinutes,
     partners = partners,
-    technics = technicItem,
+    technicItem = technicItem,
 )
 
 fun TrainingItem.toEntity(): TrainingEntity = TrainingEntity(
@@ -16,5 +16,5 @@ fun TrainingItem.toEntity(): TrainingEntity = TrainingEntity(
     date = date,
     durationMinutes = durationMinutes,
     partners = partners,
-    technicItem = technics,
+    technicItem = technicItem,
 )

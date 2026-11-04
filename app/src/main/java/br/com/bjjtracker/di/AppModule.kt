@@ -8,6 +8,7 @@ import br.com.bjjtracker.domain.usecase.GetTrainingsUseCase
 import br.com.bjjtracker.domain.usecase.RegisterTrainingUseCase
 import br.com.bjjtracker.ui.home.HomeViewModel
 import java.time.Clock
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -17,6 +18,7 @@ val appModule = module {
 
     single {
         Room.databaseBuilder(androidContext(), BJJTrackerDatabase::class.java, "bjj_tracker.db")
+            .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
     }
     single { get<BJJTrackerDatabase>().trainingDao() }
@@ -26,5 +28,5 @@ val appModule = module {
     factory { RegisterTrainingUseCase(get()) }
     factory { GetTrainingsUseCase(get()) }
 
-    viewModel { HomeViewModel(get(), get(), get()) }
+    viewModel { HomeViewModel(androidApplication(), get(), get(), get()) }
 }

@@ -6,6 +6,6 @@ import br.com.bjjtracker.domain.repository.TrainingRepository
 class RegisterTrainingUseCase(private val repository: TrainingRepository) {
 
     suspend operator fun invoke(item: TrainingItem) {
-        return repository.insert(item)
+        repository.insert(item)
     }
 }

@@ -1,6 +1,7 @@
 package br.com.bjjtracker.ui.home
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import br.com.bjjtracker.domain.model.TrainingItem
 import br.com.bjjtracker.domain.usecase.GetTrainingsUseCase
@@ -21,10 +22,11 @@ import kotlinx.coroutines.launch
 private const val TRAININGS_GOAL = 25
 
 class HomeViewModel(
+    application: Application,
     private val getTrainings: GetTrainingsUseCase,
     private val registerTraining: RegisterTrainingUseCase,
     private val clock: Clock,
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     private val previousMonthName: String = LocalDate.now(clock)
         .minusMonths(1)
@@ -58,7 +60,7 @@ class HomeViewModel(
                 val thisMonth = trainings.count { YearMonth.from(it.date) == currentMonth }
                 val lastMonth =
                     trainings.count { YearMonth.from(it.date) == currentMonth.minusMonths(1) }
-                val technicsSaved = trainings.count { it.technics != null }
+                val technicsSaved = trainings.count { it.technicItem != null }
                 val totalMinutes = trainings.sumOf { it.durationMinutes }
                 val averageMinutes = if (trainings.isEmpty()) 0 else totalMinutes / trainings.size
 
@@ -69,8 +71,8 @@ class HomeViewModel(
                         trainingsThisMonth = thisMonth,
                         trainingsDeltaVsLastMonth = thisMonth - lastMonth,
                         technicsSaved = technicsSaved,
-                        timeOnMat = formatDuration(totalMinutes),
-                        averageSession = formatDuration(averageMinutes),
+                        timeOnMat = formatDuration(getApplication(), totalMinutes),
+                        averageSession = formatDuration(getApplication(), averageMinutes),
                         previousMonthName = previousMonthName,
                     )
                 }

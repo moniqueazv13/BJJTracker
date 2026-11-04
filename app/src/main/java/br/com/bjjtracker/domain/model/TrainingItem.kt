@@ -7,5 +7,5 @@ data class TrainingItem(
     val date: LocalDate,
     val durationMinutes: Int,
     val partners: String,
-    val technics: TechnicsEnum?,
+    val technicItem: TechnicsEnum?,
 )
